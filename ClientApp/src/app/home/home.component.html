@@ -1,14 +1,17 @@
-<h1>Hello, world!</h1>
-<p>Welcome to your new single-page application, built with:</p>
-<ul>
-  <li><a href='https://get.asp.net/'>ASP.NET Core</a> and <a href='https://msdn.microsoft.com/en-us/library/67ef8sbd.aspx'>C#</a> for cross-platform server-side code</li>
-  <li><a href='https://angular.io/'>Angular</a> and <a href='http://www.typescriptlang.org/'>TypeScript</a> for client-side code</li>
-  <li><a href='http://getbootstrap.com/'>Bootstrap</a> for layout and styling</li>
-</ul>
-<p>To help you get started, we've also set up:</p>
-<ul>
-  <li><strong>Client-side navigation</strong>. For example, click <em>Counter</em> then <em>Back</em> to return here.</li>
-  <li><strong>Angular CLI integration</strong>. In development mode, there's no need to run <code>ng serve</code>. It runs in the background automatically, so your client-side resources are dynamically built on demand and the page refreshes when you modify any file.</li>
-  <li><strong>Efficient production builds</strong>. In production mode, development-time features are disabled, and your <code>dotnet publish</code> configuration automatically invokes <code>ng build</code> to produce minified, ahead-of-time compiled JavaScript files.</li>
-</ul>
-<p>The <code>ClientApp</code> subdirectory is a standard Angular CLI application. If you open a command prompt in that directory, you can run any <code>ng</code> command (e.g., <code>ng test</code>), or use <code>npm</code> to install extra packages into it.</p>
+<div class="container py-5" style="max-width: 600px;" ng-controller="Main as main">
+  <div class="mb-4">
+    <h1>Demo</h1>
+    <p>This is a demo using <a href="https://github.com/steemit/sc2-sdk">SteemConnect 2 SDK</a>. You can login, logout, comment and upvote.</p>
+    <p>Find the code of this demo on GitHub: <a href="https://github.com/steemit/example-steemconnect-angular">https://github.com/steemit/example-steemconnect-angular</a></p>
+  </div>
+  <hr />
+  <div>
+    <h3>Login & logout</h3>
+    <b *ngIf="user"><img src="https://steemitimages.com/u/{{user.name}}/avatar" width="32" height="32"> {{user.name}}</b>
+    <button *ngIf="user" class="ml-2 btn btn-secondary" type="submit" onclick="logout()">
+      Logout
+    </button>
+    <a class="btn btn-primary" href="{{loginUrl}}" *ngIf="!user">Log In</a>
+  </div>
+  <hr />
+</div>
