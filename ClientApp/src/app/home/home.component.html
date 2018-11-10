@@ -1,17 +1,56 @@
 <div class="container py-5" style="max-width: 600px;" ng-controller="Main as main">
-  <div class="mb-4">
-    <h1>Demo</h1>
-    <p>This is a demo using <a href="https://github.com/steemit/sc2-sdk">SteemConnect 2 SDK</a>. You can login, logout, comment and upvote.</p>
-    <p>Find the code of this demo on GitHub: <a href="https://github.com/steemit/example-steemconnect-angular">https://github.com/steemit/example-steemconnect-angular</a></p>
-  </div>
-  <hr />
-  <div>
-    <h3>Login & logout</h3>
-    <b *ngIf="user"><img src="https://steemitimages.com/u/{{user.name}}/avatar" width="32" height="32"> {{user.name}}</b>
-    <button *ngIf="user" class="ml-2 btn btn-secondary" type="submit" onclick="logout()">
-      Logout
-    </button>
-    <a class="btn btn-primary" href="{{loginUrl}}" *ngIf="!user">Log In</a>
-  </div>
-  <hr />
+    <div class="mb-4">
+        <h1>Demo</h1>
+        <p>This is a demo using <a href="https://github.com/steemit/sc2-sdk">SteemConnect 2 SDK</a>. You can login, logout, comment and upvote.</p>
+        <p>Find the code of this demo on GitHub: <a href="https://github.com/steemit/example-steemconnect-angular">https://github.com/steemit/example-steemconnect-angular</a></p>
+    </div>
+    <hr />
+    <div>
+        <h3>Login & logout</h3>
+        <b *ngIf="user"><img src="https://steemitimages.com/u/{{user.name}}/avatar" width="32" height="32"> {{user.name}}</b>
+        <button *ngIf="user" class="ml-2 btn btn-secondary" type="submit" (click)="logout()">
+            Logout
+        </button>
+        <a class="btn btn-primary" href="{{loginUrl}}" *ngIf="!user">Log In</a>
+    </div>
+    <hr />
+
+
+    <hr />
+    <h3>Comment & vote</h3>
+    <div class="input-group input-group-lg">
+        Last comments on the post: @{{parentAuthor}}/{{parentPermlink}}
+    </div>
+
+    <ul class="list-group my-4" ng-init="loadComments()">
+        <li class="list-group-item" ng-repeat="comment in comments">
+            @{{comment.author}}: {{comment.body}}
+            <button *ngIf="user" class="ml-2 btn btn-secondary btn-sm" type="submit" ng-click="vote(comment.author, comment.permlink, 1000)">
+                <i class="icon iconfont icon-praise"></i> {{comment.net_votes}}
+            </button>
+        </li>
+    </ul>
+
+    <form *ngIf="user" onsubmit="comment()">
+        <div class="input-group">
+            <input type="text" class="form-control" ng-disabled="loading" placeholder="Write a comment here" ng-model="message">
+            <span class="input-group-btn">
+                <button class="btn btn-primary" type="submit">Submit</button>
+            </span>
+        </div>
+    </form>
+
+    <hr />
+    <h3>User metadata</h3>
+    <p>SteemConnect allows you to store data related to each user (such as user preferences) that do not impact a user's core functionality.</p>
+    <form *ngIf="user" onsubmit="updateUserMetadata({ locale: locale })">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="What is your locale?" ng-model="locale">
+            <span class="input-group-btn">
+                <button class="btn btn-primary" type="submit">Save</button>
+            </span>
+        </div>
+        <pre class="mt-4">{{metadata}}</pre>
+    </form>
+
 </div>
