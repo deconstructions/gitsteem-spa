@@ -78,6 +78,8 @@ import { ActivatedRoute } from '@angular/router';
     };
 
     public comment() {
+        console.log("Clicked Submit Comment");
+        console.log("Message ", this.message);
       this.loading = true;
       var permlink = steem.formatter.commentPermlink(this.parentAuthor, this.parentPermlink);
       this.api.comment(this.parentAuthor, this.parentPermlink, this.user.name, permlink, '', this.message, '', (err, result) => {
