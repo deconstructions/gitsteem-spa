@@ -47,11 +47,11 @@
   <hr />
   <h3>User metadata</h3>
   <p>SteemConnect allows you to store data related to each user (such as user preferences) that do not impact a user's core functionality.</p>
-  <form *ngIf="user" onsubmit="updateUserMetadata({ locale: locale })">
+  <form *ngIf="user">
     <div class="input-group">
-      <input type="text" class="form-control" placeholder="What is your locale?" ng-model="locale">
+      <input name="metadataInput" type="text" class="form-control" placeholder="What is your user preference?" [(ngModel)]="userPreference">
       <span class="input-group-btn">
-        <button class="btn btn-primary" type="submit">Save</button>
+        <button class="btn btn-primary" (click)="updateUserMetadata({ userPreference: userPreference })" type="submit">Save</button>
       </span>
     </div>
     <pre class="mt-4">{{metadata}}</pre>

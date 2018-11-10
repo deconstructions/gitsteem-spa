@@ -32,6 +32,8 @@ import { ActivatedRoute } from '@angular/router';
 
     private metadata;
 
+    private userPreference;
+
     constructor(@Inject('STEEM_API') api: steemconnect, private route: ActivatedRoute) {
         this.api = api;
         route.queryParams.subscribe((params) => {
