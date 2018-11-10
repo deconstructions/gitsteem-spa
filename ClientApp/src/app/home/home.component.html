@@ -8,7 +8,7 @@
   <hr />
   <div>
     <h3>Login & logout</h3>
-    <b *ngIf="user"><img src="https://steemitimages.com/u/{{user.name}}/avatar" width="32" height="32"> {{user.name}}</b>
+    <b *ngIf="user"><img src="https://steemitimages.com/u/{{user}}/avatar" width="32" height="32"> {{user}}</b>
     <button *ngIf="user" class="ml-2 btn btn-secondary" type="submit" (click)="logout()">
       Logout
     </button>

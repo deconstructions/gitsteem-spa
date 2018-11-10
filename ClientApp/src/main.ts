@@ -10,11 +10,22 @@ export function getBaseUrl() {
 }
 
 export function initializeSteem() {
-  return steemconnect.Initialize({
+    console.log("Initialize Steem Api")
+  var api =  steemconnect.Initialize({
           app: 'gitsteem-co',
           callbackURL: 'http://localhost:5000/',
-          scope: ['vote', 'comment']
-        });
+          scope: ['vote', 'comment', 'custom_json', 'comment_options'],
+          });
+
+    console.log("Steem Api Initialized")
+
+    var token = localStorage.getItem('steemToken');
+
+    if (token) {
+        api.setAccessToken(token);
+    }
+
+    return api;
 }
 
 const providers = [

@@ -2,7 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { Observable } from "rxjs/Observable";
 import * as steemconnect from 'steemconnect';
 import * as steem from 'steem';
-import { ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import 'rxjs/add/operator/first';
+import { AuthenticationService } from '../services/index';
 
 @Component({
   selector: 'app-home',
@@ -34,31 +36,34 @@ import { ActivatedRoute } from '@angular/router';
 
     private userPreference;
 
-    constructor(@Inject('STEEM_API') api: steemconnect, private route: ActivatedRoute) {
-        this.api = api;
-        route.queryParams.subscribe((params) => {
-            console.log(params['access_token']);
-            if (!this.isAuth) {
-                this.expiresIn = params['expires_in'];
+    private returnUrl: string;
 
-                this.api.setAccessToken(params['access_token']);
-                this.api.me( (err, result) => 
-                {
-                    console.log(err);
-                  if (!err)
-                  {
-                      this.user = result.account;
-                      this.isAuth = true;
-                      this.metadata = JSON.stringify(result.user_metadata, null, 2);
-                  }
-                });
+    constructor(
+        @Inject('STEEM_API') api: steemconnect,
+        private route: ActivatedRoute,
+        private router: Router,
+        private authenticationService: AuthenticationService)
+    {
+        console.log("Home Component : Constructor");
+        this.api = api;
+        this.route.queryParams.subscribe((params) => {
+            console.log("Home Component : Query parameters changed");
+            if (params['access_token'])
+            {
+                console.log("Home Component : new token recieved from Steemconnect");
+                console.log("Home Component : storing access token from query parameter");
+                this.authenticationService.storeTokenAndReturn(params['access_token'], params['expires_in'],'');
             }
         });
     }
 
     ngOnInit()
     {
-        this.loginUrl = this.api.getLoginURL();
+        console.log("Home Component : Initialization");
+        // get return url from route parameters or default to '/'
+        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+        this.user = localStorage.getItem('currentUser');
+        this.metadata = localStorage.getItem('currentUserMetadata')
         this.loading = false;
         this.parentAuthor = 'deconstruction';
         this.parentPermlink = 'the-dragon-above-the-clouds-pilatus-hike-part-6-the-skywalker';
@@ -66,7 +71,6 @@ import { ActivatedRoute } from '@angular/router';
     }
 
     public loadComments() {
-        console.log(this);
         steem.api.getContentReplies(this.parentAuthor, this.parentPermlink, (err, result) => {
         if (!err) {
           this.comments = result;
@@ -115,16 +119,21 @@ import { ActivatedRoute } from '@angular/router';
       });
     };
 
-    public logout(){
-        this.api.revokeToken( (err, result) => {
+    public logout()
+    {
+       this.api.revokeToken((err, result) => {
 
-            if (err) {
-                console.log(err);
-            }
-            else {
-                 console.log('You successfully logged out', err, result);
-                  this.user = null;
-            }
-      });
-    };
+       if (err)
+         {
+             console.log(err);
+         }
+       else
+        {
+            localStorage.clear();
+            delete this.user;
+            delete this.metadata;
+            console.log('You successfully logged out');
+        }
+       });
+    }
 }
