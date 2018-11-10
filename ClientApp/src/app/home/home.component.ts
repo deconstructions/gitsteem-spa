@@ -44,7 +44,6 @@ import { ActivatedRoute } from '@angular/router';
                 this.api.setAccessToken(params['access_token']);
                 this.api.me( (err, result) => 
                 {
-                    console.log(result);
                     console.log(err);
                   if (!err)
                   {
@@ -69,7 +68,6 @@ import { ActivatedRoute } from '@angular/router';
     public loadComments() {
         console.log(this);
         steem.api.getContentReplies(this.parentAuthor, this.parentPermlink, (err, result) => {
-            console.log(result);
         if (!err) {
           this.comments = result;
         }
@@ -80,8 +78,6 @@ import { ActivatedRoute } from '@angular/router';
     };
 
     public comment() {
-        console.log("Clicked Submit Comment");
-        console.log("Message ", this.message);
       this.loading = true;
       var permlink = steem.formatter.commentPermlink(this.parentAuthor, this.parentPermlink);
       this.api.comment(this.parentAuthor, this.parentPermlink, this.user.name, permlink, '', this.message, '', (err, result) => {
