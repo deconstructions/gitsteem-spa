@@ -19,19 +19,22 @@
     <hr />
     <h3>Comment & vote</h3>
     <div class="input-group input-group-lg">
-        Last comments on the post: @{{parentAuthor}}/{{parentPermlink}}
+        Last comments on the post: {{parentAuthor}}/{{parentPermlink}}
     </div>
+    <button *ngIf="user" class="ml-2 btn btn-secondary" type="submit" (click)="loadComments()">
+      Load
+    </button>
 
-    <ul class="list-group my-4" ng-init="loadComments()">
-        <li class="list-group-item" ng-repeat="comment in comments">
+    <ul class="list-group my-4">
+        <li class="list-group-item" *ngFor="let comment of comments">
             @{{comment.author}}: {{comment.body}}
-            <button *ngIf="user" class="ml-2 btn btn-secondary btn-sm" type="submit" ng-click="vote(comment.author, comment.permlink, 1000)">
+            <button *ngIf="user" class="ml-2 btn btn-secondary btn-sm" type="submit" (click)="vote(comment.author, comment.permlink, 973)">
                 <i class="icon iconfont icon-praise"></i> {{comment.net_votes}}
             </button>
         </li>
     </ul>
 
-    <form *ngIf="user" onsubmit="comment()">
+    <form *ngIf="user" (onsubmit)="comment()">
         <div class="input-group">
             <input type="text" class="form-control" ng-disabled="loading" placeholder="Write a comment here" ng-model="message">
             <span class="input-group-btn">

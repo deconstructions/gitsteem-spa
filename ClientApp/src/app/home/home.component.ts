@@ -58,12 +58,21 @@ import { ActivatedRoute } from '@angular/router';
     ngOnInit()
     {
         this.loginUrl = this.api.getLoginURL();
+        this.loading = false;
+        this.parentAuthor = 'deconstruction';
+        this.parentPermlink = 'the-dragon-above-the-clouds-pilatus-hike-part-6-the-skywalker';
+       
     }
 
     public loadComments() {
-      this.api.getContentReplies(this.parentAuthor, this.parentPermlink, (err, result) => {
+        console.log(this);
+        steem.api.getContentReplies(this.parentAuthor, this.parentPermlink, (err, result) => {
+            console.log(result);
         if (!err) {
-          this.comments = result.slice(-5);
+          this.comments = result;
+        }
+        else {
+            console.log(err);
         }
       });
     };
