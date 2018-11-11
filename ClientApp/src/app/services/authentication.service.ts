@@ -49,21 +49,9 @@ export class AuthenticationService {
                      var user = result.pop();
 
                      localStorage.setItem('githubUser', JSON.stringify(user));
-                    window.location.href = this.baseUrl +  returnUrl;
+                     window.location.href = this.baseUrl +  returnUrl;
+                     console.log("Github access Token and user data stored");
                    },
                  error => console.error(error));
-        /* this.http.post<any>('/api/authenticate', { username: username, password: password })
-            .map(user => {
-                // login successful if there's a jwt token in the response
-                /* if (user && user.token) {
-                    // store user details and jwt token in local storage to keep user logged in between page refreshes
-                    localStorage.setItem('currentUser', JSON.stringify(user)); */
-                //}
- 
-               // return user;
-          //  });
-
-        // localStorage.setItem('githubToken', token);
-        console.log("Github access Token stored");
     }
 }

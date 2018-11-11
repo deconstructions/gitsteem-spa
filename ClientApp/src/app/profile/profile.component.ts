@@ -16,7 +16,7 @@ export class ProfileComponent implements OnInit {
 
     private user;
 
-    private githubUser;
+    private githubUser: GithubUser;
 
     private api : steemconnect;
 
@@ -48,12 +48,12 @@ export class ProfileComponent implements OnInit {
         console.log("Profile Component : Initialization");
       
         this.user = localStorage.getItem('currentUser');
-        this.githubUser = localStorage.getItem('currentGithubUser');
+        this.githubUser = JSON.parse(localStorage.getItem('githubUser'));
         this.steemLoginUrl = this.api.getLoginURL();
         this.githubLoginUrl = "https://github.com/login/oauth/authorize?client_id=197e2e9b1b3104d1b7e5&redirect_uri=http://localhost:5000/profile/";
     }
 
-    public logout()
+    public logoutSteem()
     {
        this.api.revokeToken((err, result) => {
 
@@ -63,11 +63,20 @@ export class ProfileComponent implements OnInit {
          }
        else
         {
-           localStorage.clear();
+           localStorage.removeItem('currentUser');
+           localStorage.removeItem('currentUserMetadata');
+           localStorage.removeItem('steemToken');
+
            delete this.user;
-           delete this.githubUser;
-           console.log('You successfully logged out');
+           console.log('You successfully logged out of Steem');
         }
        });
+    }
+
+    public logoutGithub()
+    {
+        localStorage.removeItem('githubUser');
+        delete this.githubUser;
+        console.log('You successfully logged out of Github');
     }
 }
