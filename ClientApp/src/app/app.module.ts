@@ -7,6 +7,7 @@ import { routing }        from './app.routing';
 import { AuthGuard } from './guards/index';
 import { JwtInterceptor } from './helpers/index';
 import { AuthenticationService } from './services/index';
+import { IssuesService } from './services/index';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
@@ -29,7 +30,8 @@ import { IssuesComponent } from './issues/issues.component';
   ],
     providers: [
         AuthGuard,
-        AuthenticationService],
+        AuthenticationService,
+        IssuesService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
