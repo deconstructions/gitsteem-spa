@@ -5,31 +5,27 @@
     <p>This is a demo using <a href="https://github.com/steemit/sc2-sdk">SteemConnect 2 SDK</a>. You can login, logout, comment and upvote.</p>
     <p>Find the code of this demo on GitHub: <a href="https://github.com/steemit/example-steemconnect-angular">https://github.com/steemit/example-steemconnect-angular</a></p>
   </div>
-  <hr />
-  <div>
-    <h3>Login & logout</h3>
-    <b *ngIf="user"><img src="https://steemitimages.com/u/{{user}}/avatar" width="32" height="32"> {{user}}</b>
+  <hr *ngIf="user"/>
+  <div *ngIf="user">
+    <h3>logout</h3>
+    <b><img src="https://steemitimages.com/u/{{user}}/avatar" width="32" height="32"> {{user}}</b>
     <button *ngIf="user" class="ml-2 btn btn-secondary" type="submit" (click)="logout()">
       Logout
     </button>
-    <a class="btn btn-primary" href="{{loginUrl}}" *ngIf="!user">Log In</a>
   </div>
-  <hr />
-
-
-  <hr />
-  <h3>Comment & vote</h3>
-  <div class="input-group input-group-lg">
+  <hr *ngIf="user" />
+  <h3 *ngIf="user">Comment & vote</h3>
+  <div *ngIf="user" class="input-group input-group-lg">
     Last comments on the post: {{parentAuthor}}/{{parentPermlink}}
   </div>
   <button *ngIf="user" class="ml-2 btn btn-secondary" type="submit" (click)="loadComments()">
     Load
   </button>
 
-  <ul class="list-group my-4">
+  <ul *ngIf="user" class="list-group my-4">
     <li class="list-group-item" *ngFor="let comment of comments">
       @{{comment.author}}: {{comment.body}}
-      <button *ngIf="user" class="ml-2 btn btn-secondary btn-sm" type="submit" (click)="vote(comment.author, comment.permlink, 973)">
+      <button class="ml-2 btn btn-secondary btn-sm" type="submit" (click)="vote(comment.author, comment.permlink, 973)">
         <i class="icon iconfont icon-praise"></i> {{comment.net_votes}}
       </button>
     </li>
@@ -44,9 +40,9 @@
     </div>
   </form>
 
-  <hr />
-  <h3>User metadata</h3>
-  <p>SteemConnect allows you to store data related to each user (such as user preferences) that do not impact a user's core functionality.</p>
+  <hr *ngIf="user" />
+  <h3 *ngIf="user">User metadata</h3>
+  <p *ngIf="user">SteemConnect allows you to store data related to each user (such as user preferences) that do not impact a user's core functionality.</p>
   <form *ngIf="user">
     <div class="input-group">
       <input name="metadataInput" type="text" class="form-control" placeholder="What is your user preference?" [(ngModel)]="userPreference">

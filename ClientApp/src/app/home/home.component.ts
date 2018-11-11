@@ -11,8 +11,6 @@ import { AuthenticationService } from '../services/index';
   templateUrl: './home.component.html',
 })
     export class HomeComponent implements OnInit{
-
-    public loginUrl : string = "";
     
     public isAuth : boolean = false;
 
