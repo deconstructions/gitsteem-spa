@@ -24,8 +24,14 @@ export class IssuesService {
 
     fetchIssues(callback: (issues: Issue[]) => void)
     {
-        var array = new Array<Issue>();
         console.log("Fetching issues");
-        callback(array);
+        let user:GithubUser = JSON.parse(localStorage.getItem('githubUser'));
+        this.http.get<Issue[]>(this.baseUrl + 'api/Github/GetIssues?token=' + user.token)
+           .subscribe(
+               result =>
+               {
+                  callback(result);
+               },
+               error => console.error(error));
     }
 }

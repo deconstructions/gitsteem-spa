@@ -50,7 +50,7 @@ export class ProfileComponent implements OnInit {
         this.user = localStorage.getItem('currentUser');
         this.githubUser = JSON.parse(localStorage.getItem('githubUser'));
         this.steemLoginUrl = this.api.getLoginURL();
-        this.githubLoginUrl = "https://github.com/login/oauth/authorize?client_id=197e2e9b1b3104d1b7e5&redirect_uri=http://localhost:5000/profile/";
+        this.githubLoginUrl = "https://github.com/login/oauth/authorize?client_id=197e2e9b1b3104d1b7e5&redirect_uri=http://localhost:5000/profile/&scope=public_repo%20read:user";
     }
 
     public logoutSteem()

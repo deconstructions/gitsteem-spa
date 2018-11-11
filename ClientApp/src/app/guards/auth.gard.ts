@@ -29,7 +29,7 @@ export class AuthGuard implements CanActivate {
 
             console.log("Redirecting to Github")
             // not logged in so redirect to github auth page
-            window.location.href = "https://github.com/login/oauth/authorize?client_id=197e2e9b1b3104d1b7e5&redirect_uri=http://localhost:5000/profile/";
+            window.location.href = "https://github.com/login/oauth/authorize?client_id=197e2e9b1b3104d1b7e5&redirect_uri=http://localhost:5000/profile/&scope=public_repo%20read:user";
             return false;
         }
 

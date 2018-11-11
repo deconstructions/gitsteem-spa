@@ -1,5 +1,5 @@
 interface GithubUser {
-    Token: string;
-    Name: string;
-    AvatarUrl: string;
+    token: string;
+    name: string;
+    avatarUrl: string;
 }

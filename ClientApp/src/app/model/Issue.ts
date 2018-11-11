@@ -1,5 +1,5 @@
 interface Issue {
-    Title: string;
-    Repo: string;
-    State: string;
+    title: string;
+    repo: string;
+    state: string;
 }
