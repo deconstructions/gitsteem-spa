@@ -13,7 +13,7 @@ export function initializeSteem() {
     console.log("Initialize Steem Api")
   var api =  steemconnect.Initialize({
           app: 'gitsteem-co',
-          callbackURL: 'http://localhost:5000/',
+          callbackURL: 'http://localhost:5000/profile',
           scope: ['vote', 'comment', 'custom_json', 'comment_options'],
           });
 

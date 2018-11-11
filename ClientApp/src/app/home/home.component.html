@@ -5,14 +5,6 @@
     <p>This is a demo using <a href="https://github.com/steemit/sc2-sdk">SteemConnect 2 SDK</a>. You can login, logout, comment and upvote.</p>
     <p>Find the code of this demo on GitHub: <a href="https://github.com/steemit/example-steemconnect-angular">https://github.com/steemit/example-steemconnect-angular</a></p>
   </div>
-  <hr *ngIf="user"/>
-  <div *ngIf="user">
-    <h3>logout</h3>
-    <b><img src="https://steemitimages.com/u/{{user}}/avatar" width="32" height="32"> {{user}}</b>
-    <button *ngIf="user" class="ml-2 btn btn-secondary" type="submit" (click)="logout()">
-      Logout
-    </button>
-  </div>
   <hr *ngIf="user" />
   <h3 *ngIf="user">Comment & vote</h3>
   <div *ngIf="user" class="input-group input-group-lg">

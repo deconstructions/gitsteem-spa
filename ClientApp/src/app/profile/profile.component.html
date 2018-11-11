@@ -1,2 +1,11 @@
 <h1>Profile</h1>
 
+<div>
+  <h3>User</h3>
+  <b *ngIf="user"><img src="https://steemitimages.com/u/{{user}}/avatar" width="32" height="32"> {{user}}</b>
+  <button *ngIf="user" class="ml-2 btn btn-secondary" type="submit" (click)="logout()">
+    Logout
+  </button>
+  <a class="btn btn-primary" href="{{steemLoginUrl}}" *ngIf="!user">Steem Log In</a>
+  <a class="btn btn-primary" href="{{githubLoginUrl}}" *ngIf="!githubUser">Github Log In</a>
+</div>
