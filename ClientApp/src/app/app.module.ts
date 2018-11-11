@@ -10,16 +10,16 @@ import { AuthenticationService } from './services/index';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
-import { CounterComponent } from './counter/counter.component';
-import { FetchDataComponent } from './fetch-data/fetch-data.component';
+import { ProfileComponent } from './profile/profile.component';
+import { IssuesComponent } from './issues/issues.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavMenuComponent,
     HomeComponent,
-    CounterComponent,
-    FetchDataComponent
+    ProfileComponent,
+    IssuesComponent
   ],
     imports: [
     routing,
