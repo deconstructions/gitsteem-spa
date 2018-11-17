@@ -5,8 +5,11 @@
 <ul class="list-group my-4">
   <li class="list-group-item" *ngFor="let repo of repos">
       {{repo.name}}
+    <div *ngIf="repo.isPosted">
+      Already posted!
+    </div>
     <span class="input-group-btn">
-      <button *ngIf="!loading" class="btn btn-primary" (click)="postRepo(repo)" type="submit">Submit</button>
+      <button *ngIf="!loading && !repo.isPosted" class="btn btn-primary" (click)="postRepo(repo)" type="submit">Submit</button>
     </span>
   </li>
 </ul>
@@ -17,9 +20,11 @@
 </button>
 <ul class="list-group my-4">
   <li class="list-group-item" *ngFor="let issue of issues">
-    @{{issue.repo}}: {{issue.title}}
-    <span class="input-group-btn">
-      <button *ngIf="!loading" class="btn btn-primary" (click)="postIssue(issue)" type="submit">Submit</button>
-    </span>
+    <div *ngIf="issue.isRepoPosted">
+      @{{issue.repo}}: {{issue.title}}
+      <span class="input-group-btn">
+        <button *ngIf="!loading" class="btn btn-primary" (click)="postIssue(issue)" type="submit">Submit</button>
+      </span>
+    </div>
   </li>
 </ul>

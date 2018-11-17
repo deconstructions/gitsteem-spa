@@ -47,8 +47,6 @@ namespace gitsteemspa.Controllers
                 Credentials = new Credentials(token)
             };
 
-            var currentUser = await client.User.Current();
-
             var request = new IssueRequest
             {
                 Filter = IssueFilter.All,
@@ -59,7 +57,8 @@ namespace gitsteemspa.Controllers
 
             return issues.Select(i => new GitsteemIssue
             {
-                Repo = i.Repository.Name,
+                RepoName = i.Repository.Name,
+                RepoId = i.Repository.Id,
                 Title = i.Title,
                 State = i.State.StringValue
             });
@@ -119,13 +118,31 @@ namespace gitsteemspa.Controllers
                 set;
             }
 
-            public string Repo
+            public string RepoName
+            {
+                get;
+                set;
+            }
+
+            public long RepoId
             {
                 get;
                 set;
             }
 
             public string State
+            {
+                get;
+                set;
+            }
+
+            public bool IsPosted
+            {
+                get;
+                set;
+            }
+
+            public bool IsRepoPosted
             {
                 get;
                 set;

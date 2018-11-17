@@ -1,5 +1,8 @@
 interface Issue {
     title: string;
-    repo: string;
+    repoName: string;
+    repoId: number;
     state: string;
+    isRepoPosted: boolean;
+    isPosted: boolean;
 }

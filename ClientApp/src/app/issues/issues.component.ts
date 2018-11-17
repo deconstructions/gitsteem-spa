@@ -72,10 +72,10 @@ export class IssuesComponent implements OnInit {
         console.log("Publishing repo to steem : ", repo);
         this.loading = true;
         var title = '[Steemconnect test] ' + repo.name;
-        var message = 'This post has been generated from the Github repository "' + repo.name + '": more details, include readme markdown';
-        var permlink = this.commentPermlink(repo.name);
+        var message = 'This post has been generated from the Github repository "' + repo.name;
+        var permlink = 'gitsteemrepo-' + repo.id;
         console.log("Permlink: ", permlink);
-        this.api.comment("", "my-category", this.user, permlink, title, message, '', (err, result) => {
+        this.api.comment("", "gitsteem", this.user, permlink, title, message, '', (err, result) => {
           console.log(err, result);
           this.loading = false;
           this.loadRepos();
