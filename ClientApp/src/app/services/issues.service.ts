@@ -34,4 +34,17 @@ export class IssuesService {
                },
                error => console.error(error));
     }
+
+    fetchRepos(callback: (repos: Repo[]) => void)
+    {
+        console.log("Fetching repositories");
+        let user:GithubUser = JSON.parse(localStorage.getItem('githubUser'));
+        this.http.get<Repo[]>(this.baseUrl + 'api/Github/GetRepos?token=' + user.token)
+           .subscribe(
+               result =>
+               {
+                  callback(result);
+               },
+               error => console.error(error));
+    }
 }

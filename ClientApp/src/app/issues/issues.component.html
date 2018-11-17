@@ -1,14 +1,25 @@
-<h1>Github issues</h1>
+<h3>Owned public repositories</h3>
+<button class="ml-2 btn btn-secondary" type="submit" (click)="loadRepos()">
+  Load
+</button>
+<ul class="list-group my-4">
+  <li class="list-group-item" *ngFor="let repo of repos">
+      {{repo.name}}
+    <span class="input-group-btn">
+      <button *ngIf="!loading" class="btn btn-primary" (click)="postRepo(repo)" type="submit">Submit</button>
+    </span>
+  </li>
+</ul>
 
+<h3>Issues</h3>
 <button class="ml-2 btn btn-secondary" type="submit" (click)="loadIssues()">
   Load
 </button>
-
 <ul class="list-group my-4">
   <li class="list-group-item" *ngFor="let issue of issues">
     @{{issue.repo}}: {{issue.title}}
     <span class="input-group-btn">
-      <button class="btn btn-primary" (click)="comment(issue)" type="submit">Submit</button>
+      <button *ngIf="!loading" class="btn btn-primary" (click)="postIssue(issue)" type="submit">Submit</button>
     </span>
   </li>
 </ul>

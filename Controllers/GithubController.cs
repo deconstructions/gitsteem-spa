@@ -65,6 +65,52 @@ namespace gitsteemspa.Controllers
             });
         }
 
+        [HttpGet("[action]")]
+        public async Task<IEnumerable<GitsteemRepo>> GetRepos(string token)
+        {
+            var client = new GitHubClient(new ProductHeaderValue("Gitsteem.co"))
+            {
+                Credentials = new Credentials(token)
+            };
+
+            var currentUser = await client.User.Current();
+
+            var request = new RepositoryRequest
+            {
+                Type = RepositoryType.Owner
+            };
+
+            var repos = await client.Repository.GetAllForCurrent(request);
+
+            return repos.Select(i => new GitsteemRepo
+            {
+                Name = i.Name,
+                Id = i.Id,
+                IsPosted = false
+            });
+        }
+
+        public class GitsteemRepo
+        {
+            public string Name
+            {
+                get;
+                set;
+            }
+
+            public long Id
+            {
+                get;
+                set;
+            }
+
+            public bool IsPosted
+            {
+                get;
+                set;
+            }
+        }
+
         public class GitsteemIssue
         {
             public string Title
