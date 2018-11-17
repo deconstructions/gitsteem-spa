@@ -23,15 +23,6 @@
     </li>
   </ul>
 
-  <form *ngIf="user" >
-    <div class="input-group">
-      <input name="commentInput" type="text" class="form-control" ng-disabled="loading" placeholder="Write a comment here" [(ngModel)]="message">
-      <span class="input-group-btn">
-        <button class="btn btn-primary" (click)="comment()" type="submit">Submit</button>
-      </span>
-    </div>
-  </form>
-
   <hr *ngIf="user" />
   <h3 *ngIf="user">User metadata</h3>
   <p *ngIf="user">SteemConnect allows you to store data related to each user (such as user preferences) that do not impact a user's core functionality.</p>

@@ -12,8 +12,6 @@ import 'rxjs/add/operator/first';
     
     public isAuth : boolean = false;
 
-    public loading : boolean = false;
-
     public parentAuthor : string;
 
     public parentPermlink : string;
@@ -42,7 +40,6 @@ import 'rxjs/add/operator/first';
         console.log("Home Component : Initialization");
         this.user = localStorage.getItem('currentUser');
         this.metadata = localStorage.getItem('currentUserMetadata')
-        this.loading = false;
         this.parentAuthor = 'deconstruction';
         this.parentPermlink = 'the-dragon-above-the-clouds-pilatus-hike-part-6-the-skywalker';
     }
@@ -57,18 +54,7 @@ import 'rxjs/add/operator/first';
         }
       });
     };
-
-    public comment() {
-      this.loading = true;
-      var permlink = steem.formatter.commentPermlink(this.parentAuthor, this.parentPermlink);
-      this.api.comment(this.parentAuthor, this.parentPermlink, this.user.name, permlink, '', this.message, '', (err, result) => {
-        console.log(err, result);
-        this.message = '';
-        this.loading = false;
-        this.loadComments();
-      });
-    };
-
+    
     public vote(author, permlink, weight) {
       this.api.vote(this.user.name, author, permlink, weight, (err, result) => {
         if (!err) {

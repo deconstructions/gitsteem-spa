@@ -7,5 +7,8 @@
 <ul class="list-group my-4">
   <li class="list-group-item" *ngFor="let issue of issues">
     @{{issue.repo}}: {{issue.title}}
+    <span class="input-group-btn">
+      <button class="btn btn-primary" (click)="comment(issue)" type="submit">Submit</button>
+    </span>
   </li>
 </ul>
