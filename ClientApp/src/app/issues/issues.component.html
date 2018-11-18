@@ -1,30 +1,38 @@
-<h3>Owned public repositories</h3>
-<button class="ml-2 btn btn-secondary" type="submit" (click)="loadRepos()">
-  Load
+<button class="ml-2 btn btn-secondary" type="submit" (click)="loadAll()">
+    Load
 </button>
-<ul class="list-group my-4">
+
+<h3>Owned public repositories</h3>
+
+<ul *ngIf="!loadingRepos" class="list-group my-4">
   <li class="list-group-item" *ngFor="let repo of repos">
       {{repo.name}}
     <div *ngIf="repo.isPosted">
       Already posted!
     </div>
     <span class="input-group-btn">
-      <button *ngIf="!loading && !repo.isPosted" class="btn btn-primary" (click)="postRepo(repo)" type="submit">Submit</button>
+      <button *ngIf="!repo.isPosted" class="btn btn-primary" (click)="postRepo(repo)" type="submit">Submit</button>
     </span>
   </li>
 </ul>
 
 <h3>Issues</h3>
-<button class="ml-2 btn btn-secondary" type="submit" (click)="loadIssues()">
-  Load
-</button>
-<ul class="list-group my-4">
+<ul *ngIf="!loadingIssues" class="list-group my-4">
   <li class="list-group-item" *ngFor="let issue of issues">
-    <div *ngIf="issue.isRepoPosted">
-      @{{issue.repo}}: {{issue.title}}
-      <span class="input-group-btn">
-        <button *ngIf="!loading" class="btn btn-primary" (click)="postIssue(issue)" type="submit">Submit</button>
-      </span>
-    </div>
+      <div>
+          @{{issue.repoName}}: {{issue.title}}
+          <div *ngIf="!issue.isRepoPosted">
+              Repository not posted!
+          </div>
+          <div *ngIf="issue.isPosted">
+              Already posted!
+          </div>
+          <div *ngIf="issue.state == 'closed' ">
+              Issue is closed.
+          </div>
+          <span class="input-group-btn">
+              <button *ngIf="issue.isRepoPosted &&  issue.state != 'closed' && !issue.isPosted" class="btn btn-primary" (click)="postIssue(issue)" type="submit">Submit</button>
+          </span>
+      </div>
   </li>
 </ul>

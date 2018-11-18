@@ -16,7 +16,9 @@ export class IssuesComponent implements OnInit {
 
     private user;
 
-    public loading : boolean = false;
+    public loadingIssues : boolean = false;
+
+    public loadingRepos : boolean = false;
 
     private api;
 
@@ -28,68 +30,68 @@ export class IssuesComponent implements OnInit {
         this.api = api;
     }
 
+    ngOnInit() {
+        this.loadingRepos = false;
+        this.loadingIssues = false;
+        this.user = localStorage.getItem('currentUser');
+        this.loadAll();
+    }
+
     loadIssues() {
-         this.loading = true;
+         this.loadingIssues = true;
         this.issuesService.fetchIssues(
             (issues) =>
             {
                 this.issues = issues;
                 console.log("Issues loaded");
-                 this.loading = false;
+                this.loadingIssues = false;
             });
     }
 
+    loadAll() {
+        this.loadRepos();
+        this.loadIssues();
+    }
+
     loadRepos() {
-         this.loading = true;
+         this.loadingRepos = true;
         this.issuesService.fetchRepos(
             (repos) =>
             {
                 this.repos = repos;
                 console.log("Repos loaded");
-                 this.loading = false;
+                 this.loadingRepos = false;
             });
-    }
-
-    ngOnInit() {
-        this.loading = false;
-        this.user = localStorage.getItem('currentUser');
     }
 
     public postIssue(issue: Issue) {
         console.log("Publishing issue to steem : ", issue);
-        this.loading = true;
+        this.loadingIssues = true;
+        var title = '[Steemconnect test] repo=' + issue.repoName + ' issue='+ issue.id;
         var message = issue.title + ' more details, rendered html body etc';
-        var permlink = this.commentPermlink(issue.title);
+        var permlink = this.commentPermlink('issue-'+issue.id);
         console.log("Permlink: ", permlink);
-        this.api.comment(this.user, "myCategory", this.user, permlink, '', message, '', (err, result) => {
+        this.api.comment(this.user, 'gitsteemrepo-' + issue.repoId, this.user, permlink, title, message, '', (err, result) => {
           console.log(err, result);
-          this.loading = false;
           this.loadIssues();
         });
     };
 
      public postRepo(repo: Repo) {
         console.log("Publishing repo to steem : ", repo);
-        this.loading = true;
+        this.loadingRepos = true;
         var title = '[Steemconnect test] ' + repo.name;
         var message = 'This post has been generated from the Github repository "' + repo.name;
         var permlink = 'gitsteemrepo-' + repo.id;
         console.log("Permlink: ", permlink);
         this.api.comment("", "gitsteem", this.user, permlink, title, message, '', (err, result) => {
           console.log(err, result);
-          this.loading = false;
           this.loadRepos();
+          this.loadIssues();
         });
     };
 
-    commentPermlink(parentPermlink: string) {
-      const timeStr = new Date()
-        .toISOString()
-        .replace(/[^a-zA-Z0-9]+/g, "")
-        .toLowerCase();
-      parentPermlink = parentPermlink.replace(/(-\d{8}t\d{9}z)/g, "");
-      let permLink =
-        parentPermlink + "-" + timeStr;
+    commentPermlink(permLink: string) {
       if (permLink.length > 255) {
         // pay respect to STEEMIT_MAX_PERMLINK_LENGTH
         permLink.substr(permLink.length - 255, permLink.length);

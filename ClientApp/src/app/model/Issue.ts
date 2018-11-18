@@ -1,4 +1,5 @@
 interface Issue {
+    id: number;
     title: string;
     repoName: string;
     repoId: number;

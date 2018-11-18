@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Octokit;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -57,6 +56,7 @@ namespace gitsteemspa.Controllers
 
             return issues.Select(i => new GitsteemIssue
             {
+                Id= i.Id,
                 RepoName = i.Repository.Name,
                 RepoId = i.Repository.Id,
                 Title = i.Title,
@@ -112,6 +112,12 @@ namespace gitsteemspa.Controllers
 
         public class GitsteemIssue
         {
+            public long Id
+            {
+                get;
+                set;
+            }
+
             public string Title
             {
                 get;
