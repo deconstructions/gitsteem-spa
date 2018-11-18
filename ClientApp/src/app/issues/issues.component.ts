@@ -64,17 +64,57 @@ export class IssuesComponent implements OnInit {
             });
     }
 
-    public postIssue(issue: Issue) {
+    public async postIssue(issue: Issue) {
         console.log("Publishing issue to steem : ", issue);
         this.loadingIssues = true;
         var title = '[Steemconnect test] repo=' + issue.repoName + ' issue='+ issue.id;
         var message = issue.title + ' more details, rendered html body etc';
         var permlink = this.commentPermlink('issue-'+issue.id);
         console.log("Permlink: ", permlink);
-        this.api.comment(this.user, 'gitsteemrepo-' + issue.repoId, this.user, permlink, title, message, '', (err, result) => {
-          console.log(err, result);
-          this.loadIssues();
+
+        var bountyHolderAccount ='gitsteem';
+
+        console.log("Bounty holder : ", bountyHolderAccount);
+
+        var beneficiaries: any[] = []; 
+        beneficiaries.push({
+            account: bountyHolderAccount,
+            weight: 10000
         });
+
+        var operations = [
+            ['comment',
+                {
+                    parent_author: this.user,
+                    parent_permlink: 'gitsteemrepo-' + issue.repoId,
+                    author: this.user,
+                    permlink: permlink,
+                    title: title,
+                    body: message,
+                    json_metadata : JSON.stringify({
+                    tags: 'gitsteem',
+                    app: 'gitsteem-co'
+                    })
+                }
+            ],
+            ['comment_options', {
+                author: this.user,
+                permlink: permlink,
+                max_accepted_payout: '100000.000 SBD',
+                percent_steem_dollars: 0,
+                allow_votes: true,
+                allow_curation_rewards: true,
+                extensions: [
+                    [0, {
+                        beneficiaries: beneficiaries
+                    }]
+                ]
+            }]
+        ];
+
+        await this.api.broadcast(operations);
+
+        this.loadIssues();
     };
 
      public postRepo(repo: Repo) {
