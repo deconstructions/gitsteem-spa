@@ -74,29 +74,6 @@ namespace gitsteemspa.Controllers
             };
         }
 
-        [HttpGet("[action]")]
-        public async Task<IEnumerable<GitsteemIssue>> GetIssues()
-        {
-            GitHubClient client = CreateAuthorizedClient();
-
-            var request = new IssueRequest
-            {
-                Filter = IssueFilter.All,
-                State = ItemStateFilter.All
-            };
-
-            var issues = await client.Issue.GetAllForCurrent(request);
-
-            return issues.Select(i => new GitsteemIssue
-            {
-                Id = i.Id,
-                RepoName = i.Repository.Name,
-                RepoId = i.Repository.Id,
-                Title = i.Title,
-                State = i.State.StringValue
-            });
-        }
-
         private GitHubClient CreateAuthorizedClient()
         {
             return new GitHubClient(new ProductHeaderValue(Environment.GetEnvironmentVariable(AppNameEnvironmentKey)))
@@ -119,16 +96,40 @@ namespace gitsteemspa.Controllers
 
             var repos = await client.Repository.GetAllForCurrent(request);
 
-            return repos.Select(i => new GitsteemRepo
+            var issuesRequest = new IssueRequest
             {
-                Name = i.Name,
+                Filter = IssueFilter.All,
+                State = ItemStateFilter.All
+            };
+
+            var issues = await client.Issue.GetAllForCurrent(issuesRequest);
+
+            var mappedIssues = issues.Select(i => new GitsteemIssue
+            {
                 Id = i.Id,
+                RepoName = i.Repository.Name,
+                RepoId = i.Repository.Id,
+                Title = i.Title,
+                State = i.State.StringValue
+            });
+
+            return repos.Select(r => new GitsteemRepo
+            {
+                Issues = mappedIssues.Where(i => i.RepoId == r.Id).ToArray(),
+                Name = r.Name,
+                Id = r.Id,
                 IsPosted = false
             });
         }
 
         public class GitsteemRepo
         {
+            public GitsteemIssue[] Issues
+            {
+                get;
+                set;
+            }
+
             public string Name
             {
                 get;

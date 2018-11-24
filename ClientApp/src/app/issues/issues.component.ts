@@ -16,9 +16,7 @@ export class IssuesComponent implements OnInit {
 
     private user;
 
-    public loadingIssues : boolean = false;
-
-    public loadingRepos : boolean = false;
+    public loading : boolean = false;
 
     private api;
 
@@ -31,42 +29,37 @@ export class IssuesComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.loadingRepos = false;
-        this.loadingIssues = false;
+        this.loading = false;
         this.user = localStorage.getItem('currentUser');
-        this.loadAll();
+        this.load();
     }
 
-    loadIssues() {
-         this.loadingIssues = true;
-        this.issuesService.fetchIssues(
-            (issues) =>
-            {
-                this.issues = issues;
-                console.log("Issues loaded");
-                this.loadingIssues = false;
-            });
-    }
-
-    loadAll() {
-        this.loadRepos();
-        this.loadIssues();
-    }
-
-    loadRepos() {
-         this.loadingRepos = true;
-        this.issuesService.fetchRepos(
+    load() {
+         this.loading = true;
+        this.issuesService.fetchOwnReposWithIssues(
             (repos) =>
             {
                 this.repos = repos;
                 console.log("Repos loaded");
-                 this.loadingRepos = false;
+
+                var allIssues = new Array<Issue>();
+                for (let repo of repos)
+                 {
+                     for (let issue of repo.issues)
+                       {
+                           allIssues.push(issue);
+                       }
+                 }
+                this.issues = allIssues;
+                console.log("Issues loaded");
+
+                this.loading = false;
             });
     }
 
     public async postIssue(issue: Issue) {
         console.log("Publishing issue to steem : ", issue);
-        this.loadingIssues = true;
+        this.loading = true;
         var title = '[Steemconnect test] repo=' + issue.repoName + ' issue='+ issue.id;
         var message = issue.title + ' more details, rendered html body etc';
         var permlink = this.commentPermlink('issue-'+issue.id);
@@ -114,20 +107,19 @@ export class IssuesComponent implements OnInit {
 
         await this.api.broadcast(operations);
 
-        this.loadIssues();
+        this.load();
     };
 
      public postRepo(repo: Repo) {
         console.log("Publishing repo to steem : ", repo);
-        this.loadingRepos = true;
+        this.loading = true;
         var title = '[Steemconnect test] ' + repo.name;
         var message = 'This post has been generated from the Github repository "' + repo.name;
         var permlink = 'gitsteemrepo-' + repo.id;
         console.log("Permlink: ", permlink);
         this.api.comment("", "gitsteem", this.user, permlink, title, message, '', (err, result) => {
           console.log(err, result);
-          this.loadRepos();
-          this.loadIssues();
+          this.load();
         });
     };
 

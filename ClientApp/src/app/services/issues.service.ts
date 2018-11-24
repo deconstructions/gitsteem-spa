@@ -25,29 +25,6 @@ export class IssuesService {
         this.baseUrl = baseUrl;
     }
 
-    fetchIssues(callback: (issues: Issue[]) => void)
-    {
-        this.getPostedRepos(postedRepoPermalinks =>
-        {
-            this.getAllPostedIssues(postedRepoPermalinks, postedIssuePermalinks => {
-                console.log("Fetching github issues in owned repositories...");
-                this.http.get<Issue[]>(this.baseUrl + 'api/Github/GetIssues')
-                   .subscribe(
-                       result =>
-                       {
-                           for (let entry of result) 
-                           {
-                               entry.isRepoPosted = postedRepoPermalinks.indexOf('gitsteemrepo-'+entry.repoId) > -1;
-                               entry.isPosted = postedIssuePermalinks.indexOf('issue-'+ entry.id) >  -1;
-                           }
-
-                           callback(result);
-                       },
-                       error => console.error(error));
-            })
-        });
-    }
-
     getPostedRepos(callback: (postedRepoPermalinks: string[]) => void){
         const query = {
             tag: localStorage.getItem('currentUser'),
@@ -82,11 +59,6 @@ export class IssuesService {
 
          this.getAllPostedIssuesRecursive(0, postedRepoPermalinks, allIssues, () =>
          {
-             for (let entry of allIssues)
-             {
-                 console.log("Issue ",entry, " has already been posted");
-             }
-
              callback(allIssues);
          });
      }
@@ -135,22 +107,30 @@ export class IssuesService {
                 });
     }
 
-    fetchRepos(callback: (repos: Repo[]) => void)
+    fetchOwnReposWithIssues(callback: (repos: Repo[]) => void)
     {
         this.getPostedRepos(postedRepoPermalinks =>
         {
-            console.log("Fetching repositories");
-            this.http.get<Repo[]>(this.baseUrl + 'api/Github/GetRepos')
-           .subscribe(
-               result =>
-               {
-                    for (let entry of result) {
-                           entry.isPosted = postedRepoPermalinks.indexOf('gitsteemrepo-'+entry.id) > -1;
-                    }
+            this.getAllPostedIssues(postedRepoPermalinks, postedIssuePermalinks => {
+               console.log("Fetching own repositories");
+               this.http.get<Repo[]>(this.baseUrl + 'api/Github/GetRepos')
+               .subscribe(
+                   result =>
+                   {
+                       for (let repo of result) {
+                           repo.isPosted = postedRepoPermalinks.indexOf('gitsteemrepo-'+repo.id) > -1;
 
-                  callback(result);
-               },
-               error => console.error(error));
+                           for (let issue of repo.issues) 
+                           {
+                               issue.isRepoPosted = repo.isPosted;
+                               issue.isPosted = postedIssuePermalinks.indexOf('issue-'+ issue.id) >  -1;
+                           }
+                       }
+
+                      callback(result);
+                   },
+                   error => console.error(error));
+                 });
         });
     }
 }

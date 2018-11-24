@@ -1,10 +1,10 @@
-<button class="ml-2 btn btn-secondary" type="submit" (click)="loadAll()">
+<button class="ml-2 btn btn-secondary" type="submit" (click)="load()">
     Load
 </button>
 
 <h3>Owned public repositories</h3>
 
-<ul *ngIf="!loadingRepos" class="list-group my-4">
+<ul *ngIf="!loading" class="list-group my-4">
   <li class="list-group-item" *ngFor="let repo of repos">
       {{repo.name}}
     <div *ngIf="repo.isPosted">
@@ -17,7 +17,7 @@
 </ul>
 
 <h3>Issues</h3>
-<ul *ngIf="!loadingIssues" class="list-group my-4">
+<ul *ngIf="!loading" class="list-group my-4">
   <li class="list-group-item" *ngFor="let issue of issues">
       <div>
           @{{issue.repoName}}: {{issue.title}}
