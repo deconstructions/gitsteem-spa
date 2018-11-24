@@ -1,15 +1,17 @@
 import { Injectable, Inject } from '@angular/core';
-import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import * as steemconnect from 'steemconnect';
  
 @Injectable()
 export class AuthGuard implements CanActivate {
 
     private api;
+    private baseUrl;
 
-    constructor(private router: Router, @Inject('STEEM_API') api: steemconnect)
+    constructor(@Inject('BASE_URL') baseUrl: string, @Inject('STEEM_API') api: steemconnect)
     {
         this.api = api;
+        this.baseUrl = baseUrl;
     }
  
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot)
@@ -29,7 +31,8 @@ export class AuthGuard implements CanActivate {
 
             console.log("Redirecting to Github")
             // not logged in so redirect to github auth page
-            window.location.href = "https://github.com/login/oauth/authorize?client_id=197e2e9b1b3104d1b7e5&redirect_uri=http://localhost:5000/profile/&scope=public_repo%20read:user";
+            window.location.href = this.baseUrl + 'api/Github/StartAuthFlow';
+
             return false;
         }
 

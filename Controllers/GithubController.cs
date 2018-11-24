@@ -12,11 +12,28 @@ namespace gitsteemspa.Controllers
     public class GithubController : Controller
     {
         [HttpGet("[action]")]
+        public IActionResult StartAuthFlow()
+        {
+            var clientId = Environment.GetEnvironmentVariable("GITHUB_CLIENT_ID");
+
+            var redirectUriBase = Environment.GetEnvironmentVariable("GITHUB_REDIRECT_URI_BASE");
+
+            return Redirect(
+                "https://github.com/login/oauth/authorize?client_id="
+                + clientId
+                + "&redirect_uri="
+                + redirectUriBase
+                + "profile/&scope=public_repo%20read:user");
+        }
+
+        [HttpGet("[action]")]
         public async Task<IEnumerable<GithubUser>> GetUser(string temporaryCode)
         {
             var clientSecret = Environment.GetEnvironmentVariable("GITHUB_CLIENT_SECRET");
-            var clientId = "197e2e9b1b3104d1b7e5";
-            var client = new GitHubClient(new ProductHeaderValue("Gitsteem.co"));
+            var clientId = Environment.GetEnvironmentVariable("GITHUB_CLIENT_ID");
+
+            var client = new GitHubClient(
+                new ProductHeaderValue(Environment.GetEnvironmentVariable("GITHUB_APP_NAME")));
 
             var request = new OauthTokenRequest(clientId, clientSecret, temporaryCode);
            
