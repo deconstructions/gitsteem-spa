@@ -21,8 +21,5 @@ export class NavMenuComponent implements OnInit {
   ngOnInit()
   {
       console.log("Navigation Menu Component : Initialization");
-      // get return url from route parameters or default to '/'
-    
-      this.user = localStorage.getItem('currentUser');
   }
 }

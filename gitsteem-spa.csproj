@@ -25,6 +25,11 @@
     <Content Remove="$(SpaRoot)**" />
     <None Remove="$(SpaRoot)**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+    <None Remove="ClientApp\src\app\explore\issues.component.html" />
+    <None Remove="ClientApp\src\app\explore\issues.component.html" />
+    <None Remove="ClientApp\src\app\explore\issues.component.html" />
+    <None Remove="ClientApp\src\app\explore\explore.component.html" />
+    <None Remove="ClientApp\src\app\explore\explore.component.html" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,6 +37,7 @@
     <Folder Include="ClientApp\src\app\helpers\" />
     <Folder Include="ClientApp\src\app\services\" />
     <Folder Include="ClientApp\src\app\model\" />
+    <Folder Include="ClientApp\src\app\explore\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Controllers\SampleDataController.cs" />

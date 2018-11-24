@@ -13,6 +13,7 @@ import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
 import { IssuesComponent } from './issues/issues.component';
+import { ExploreComponent } from './explore/explore.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { IssuesComponent } from './issues/issues.component';
     NavMenuComponent,
     HomeComponent,
     ProfileComponent,
-    IssuesComponent
+    IssuesComponent,
+    ExploreComponent
   ],
     imports: [
     routing,
