@@ -31,8 +31,7 @@ export class IssuesService {
         {
             this.getAllPostedIssues(postedRepoPermalinks, postedIssuePermalinks => {
                 console.log("Fetching github issues in owned repositories...");
-                let user:GithubUser = JSON.parse(localStorage.getItem('githubUser'));
-                this.http.get<Issue[]>(this.baseUrl + 'api/Github/GetIssues?token=' + user.token)
+                this.http.get<Issue[]>(this.baseUrl + 'api/Github/GetIssues')
                    .subscribe(
                        result =>
                        {
@@ -141,9 +140,7 @@ export class IssuesService {
         this.getPostedRepos(postedRepoPermalinks =>
         {
             console.log("Fetching repositories");
-            let user:GithubUser = JSON.parse(localStorage.getItem('githubUser'));
-
-            this.http.get<Repo[]>(this.baseUrl + 'api/Github/GetRepos?token=' + user.token)
+            this.http.get<Repo[]>(this.baseUrl + 'api/Github/GetRepos')
            .subscribe(
                result =>
                {

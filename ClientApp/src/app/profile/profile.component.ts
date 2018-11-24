@@ -36,8 +36,8 @@ export class ProfileComponent implements OnInit {
               }
               else if(params['code']){
                   console.log("Profile Component : new token recieved from Github");
-                  console.log("Profile Component : retrieving Github token from query parameter");
-                  this.authenticationService.retrieveGithubTokenAndReturn(params['code'],'profile');
+                  console.log("Profile Component : retrieving Github user from query parameter");
+                  this.authenticationService.retrieveGithubUserAndReturn(params['code'],'profile');
              
               }
           });

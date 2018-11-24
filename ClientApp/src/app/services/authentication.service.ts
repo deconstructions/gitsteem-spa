@@ -40,17 +40,21 @@ export class AuthenticationService {
         });
     }
 
-     retrieveGithubTokenAndReturn(temporaryCode: string, returnUrl: string){
+     retrieveGithubUserAndReturn(temporaryCode: string, returnUrl: string){
 
-         this.http.get<GithubUser[]>(this.baseUrl + 'api/Github/GetToken?temporaryCode=' + temporaryCode)
+         this.http.get<GithubUser[]>(this.baseUrl + 'api/Github/GetUser?temporaryCode=' + temporaryCode)
              .subscribe(
                  result =>
                  {
+                     console.log("Github access Token stored in session storage");
+
                      var user = result.pop();
 
                      localStorage.setItem('githubUser', JSON.stringify(user));
+
+                     console.log("Github user data stored in local storage");
+
                      window.location.href = this.baseUrl +  returnUrl;
-                     console.log("Github access Token and user data stored");
                    },
                  error => console.error(error));
     }

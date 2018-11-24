@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Octokit;
-
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace gitsteemspa.Controllers
 {
@@ -13,15 +12,17 @@ namespace gitsteemspa.Controllers
     public class GithubController : Controller
     {
         [HttpGet("[action]")]
-        public async Task<IEnumerable<GithubUser>> GetToken(string temporaryCode)
+        public async Task<IEnumerable<GithubUser>> GetUser(string temporaryCode)
         {
             var clientSecret = Environment.GetEnvironmentVariable("GITHUB_CLIENT_SECRET");
             var clientId = "197e2e9b1b3104d1b7e5";
             var client = new GitHubClient(new ProductHeaderValue("Gitsteem.co"));
 
             var request = new OauthTokenRequest(clientId, clientSecret, temporaryCode);
-
+           
             var token = await client.Oauth.CreateAccessToken(request);
+
+            HttpContext.Session.SetString("GITHUB_TOKEN", token.AccessToken);
 
             client.Credentials = new Credentials(token.AccessToken);
 
@@ -31,7 +32,6 @@ namespace gitsteemspa.Controllers
             { 
                 new GithubUser
                 {
-                    Token = token.AccessToken,
                     Name=currentUser.Name,
                     AvatarUrl= currentUser.AvatarUrl
                 }
@@ -39,11 +39,11 @@ namespace gitsteemspa.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IEnumerable<GitsteemIssue>> GetIssues(string token)
+        public async Task<IEnumerable<GitsteemIssue>> GetIssues()
         {
             var client = new GitHubClient(new ProductHeaderValue("Gitsteem.co"))
             {
-                Credentials = new Credentials(token)
+                Credentials = new Credentials(HttpContext.Session.GetString("GITHUB_TOKEN"))
             };
 
             var request = new IssueRequest
@@ -65,11 +65,11 @@ namespace gitsteemspa.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IEnumerable<GitsteemRepo>> GetRepos(string token)
+        public async Task<IEnumerable<GitsteemRepo>> GetRepos()
         {
             var client = new GitHubClient(new ProductHeaderValue("Gitsteem.co"))
             {
-                Credentials = new Credentials(token)
+                Credentials = new Credentials(HttpContext.Session.GetString("GITHUB_TOKEN"))
             };
 
             var currentUser = await client.User.Current();
@@ -157,12 +157,6 @@ namespace gitsteemspa.Controllers
 
         public class GithubUser
         {
-            public string Token
-            {
-                get;
-                set;
-            }
-
             public string Name
             {
                 get;
