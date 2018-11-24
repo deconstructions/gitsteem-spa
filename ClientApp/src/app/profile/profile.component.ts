@@ -79,8 +79,11 @@ export class ProfileComponent implements OnInit {
 
     public logoutGithub()
     {
-        localStorage.removeItem('githubUser');
-        delete this.githubUser;
-        console.log('You successfully logged out of Github');
+        this.authenticationService.revokeGithubToken(
+            () =>
+            {
+              delete this.githubUser;
+              console.log('You successfully logged out of Github');})
+
     }
 }

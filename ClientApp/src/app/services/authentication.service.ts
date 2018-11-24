@@ -57,5 +57,18 @@ export class AuthenticationService {
                      window.location.href = this.baseUrl +  returnUrl;
                    },
                  error => console.error(error));
+     }
+
+     revokeGithubToken(callback : ()=>void){
+
+         this.http.get(this.baseUrl + 'api/Github/RevokeToken')
+             .toPromise().then(
+                 result =>
+                 {
+                     localStorage.removeItem('githubUser');
+
+                     callback();
+                   },
+                 error => console.error(error));
     }
 }

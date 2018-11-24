@@ -11,12 +11,22 @@ namespace gitsteemspa.Controllers
     [Route("api/[controller]")]
     public class GithubController : Controller
     {
+        const string TokenSessionKey = "GITHUB_TOKEN";
+
+        const string ClientIdEnvironmentKey = "GITHUB_CLIENT_ID";
+
+        const string RedirectUriBaseEnvironmentKey = "GITHUB_REDIRECT_URI_BASE";
+
+        const string ClientSecretEnvironmentKey = "GITHUB_CLIENT_SECRET";
+
+        const string AppNameEnvironmentKey = "GITHUB_APP_NAME";
+
         [HttpGet("[action]")]
         public IActionResult StartAuthFlow()
         {
-            var clientId = Environment.GetEnvironmentVariable("GITHUB_CLIENT_ID");
+            var clientId = Environment.GetEnvironmentVariable(ClientIdEnvironmentKey);
 
-            var redirectUriBase = Environment.GetEnvironmentVariable("GITHUB_REDIRECT_URI_BASE");
+            var redirectUriBase = Environment.GetEnvironmentVariable(RedirectUriBaseEnvironmentKey);
 
             return Redirect(
                 "https://github.com/login/oauth/authorize?client_id="
@@ -27,19 +37,28 @@ namespace gitsteemspa.Controllers
         }
 
         [HttpGet("[action]")]
+        public Task RevokeToken()
+        {
+            HttpContext.Session.Remove(TokenSessionKey);
+            Response.Cookies.Delete(".AspNetCore.Session");
+
+            return Task.CompletedTask;
+        }
+
+        [HttpGet("[action]")]
         public async Task<IEnumerable<GithubUser>> GetUser(string temporaryCode)
         {
-            var clientSecret = Environment.GetEnvironmentVariable("GITHUB_CLIENT_SECRET");
-            var clientId = Environment.GetEnvironmentVariable("GITHUB_CLIENT_ID");
+            var clientSecret = Environment.GetEnvironmentVariable(ClientSecretEnvironmentKey);
+            var clientId = Environment.GetEnvironmentVariable(ClientIdEnvironmentKey);
 
             var client = new GitHubClient(
-                new ProductHeaderValue(Environment.GetEnvironmentVariable("GITHUB_APP_NAME")));
+                new ProductHeaderValue(Environment.GetEnvironmentVariable(AppNameEnvironmentKey)));
 
             var request = new OauthTokenRequest(clientId, clientSecret, temporaryCode);
            
             var token = await client.Oauth.CreateAccessToken(request);
 
-            HttpContext.Session.SetString("GITHUB_TOKEN", token.AccessToken);
+            HttpContext.Session.SetString(TokenSessionKey, token.AccessToken);
 
             client.Credentials = new Credentials(token.AccessToken);
 
@@ -58,10 +77,7 @@ namespace gitsteemspa.Controllers
         [HttpGet("[action]")]
         public async Task<IEnumerable<GitsteemIssue>> GetIssues()
         {
-            var client = new GitHubClient(new ProductHeaderValue("Gitsteem.co"))
-            {
-                Credentials = new Credentials(HttpContext.Session.GetString("GITHUB_TOKEN"))
-            };
+            GitHubClient client = CreateAuthorizedClient();
 
             var request = new IssueRequest
             {
@@ -73,7 +89,7 @@ namespace gitsteemspa.Controllers
 
             return issues.Select(i => new GitsteemIssue
             {
-                Id= i.Id,
+                Id = i.Id,
                 RepoName = i.Repository.Name,
                 RepoId = i.Repository.Id,
                 Title = i.Title,
@@ -81,13 +97,18 @@ namespace gitsteemspa.Controllers
             });
         }
 
+        private GitHubClient CreateAuthorizedClient()
+        {
+            return new GitHubClient(new ProductHeaderValue(Environment.GetEnvironmentVariable(AppNameEnvironmentKey)))
+            {
+                Credentials = new Credentials(HttpContext.Session.GetString(TokenSessionKey))
+            };
+        }
+
         [HttpGet("[action]")]
         public async Task<IEnumerable<GitsteemRepo>> GetRepos()
         {
-            var client = new GitHubClient(new ProductHeaderValue("Gitsteem.co"))
-            {
-                Credentials = new Credentials(HttpContext.Session.GetString("GITHUB_TOKEN"))
-            };
+            GitHubClient client = CreateAuthorizedClient();
 
             var currentUser = await client.User.Current();
 
