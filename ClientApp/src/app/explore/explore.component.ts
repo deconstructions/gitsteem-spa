@@ -8,7 +8,7 @@ import { IssuesService } from '../services/index';
 export class ExploreComponent implements OnInit{
 
     private loading: boolean;
-    private issuePosts: IssuePost[];
+    private issues: Issue[];
 
     constructor(
         private issuesService: IssuesService) {
@@ -17,17 +17,26 @@ export class ExploreComponent implements OnInit{
 
      ngOnInit() {
         this.loading = false;
-        this.loadIssuePosts();
+        this.loadIssues();
      }
 
-    loadIssuePosts() {
+    loadIssues() {
         this.loading = true;
-        this.issuesService.fetchAllPostedIssues(
-            (issuePosts) =>
+        this.issuesService.fetchAllReposWithIssues(
+            (repos) =>
             {
-                this.issuePosts = issuePosts;
+                var allIssues = new Array<Issue>();
+                for (let repo of repos)
+                 {
+                     for (let issue of repo.issues.filter(i => i.issuePost))
+                       {
+                           allIssues.push(issue);
+                       }
+                 }
 
-                console.log("Posted issues loaded");
+                this.issues = allIssues;
+
+                console.log("Issues loaded");
 
                 this.loading = false;
             });

@@ -29,10 +29,58 @@ export class IssuesService {
     {
         var currentUser = localStorage.getItem('currentUser');
 
-        this.getReposPostedByUser(currentUser, postedRepos =>
+        this.fetchUserReposWithIssues(currentUser, callback);
+    }
+
+     public fetchAllReposWithIssues(callback: (repos: Repo[]) => void)
+     {
+        const query = {
+            tag: 'gitsteem',
+            limit: 1,
+            start_author: 'gitsteem',
+            start_permlink: 'participants',
+            };
+
+         console.log("Fetching all posted issues...");
+
+         this.dSteemClient.database.getDiscussions('blog', query).then(
+             result => {
+                 var participants = JSON.parse(result[0].body);
+
+                 var allRepos = new Array<Repo>();
+
+                 this.getUserReposWithIssuesRecursive(0, participants, allRepos, () => callback(allRepos));
+             });
+     }
+
+    private getUserReposWithIssuesRecursive(
+        counter: number, users: string[], allRepos: Repo[], finalCallback: () => void) {
+
+        this.fetchUserReposWithIssues(users[counter], repos =>
         {
-            this.getAllIssuesPostedByUser(currentUser, postedRepos.map(r => r.permlink), postedIssues => {
-               console.log("Fetching repositories of ", currentUser);
+            for (let repo of repos)
+             {
+                 allRepos.push(repo);
+             }
+
+             if (counter == users.length - 1){
+                 finalCallback();
+             }
+             else {
+                 this.getUserReposWithIssuesRecursive(
+                     counter + 1,
+                     users,
+                     allRepos,
+                     finalCallback);
+             }
+        });
+    }
+
+    private fetchUserReposWithIssues(userName: string, callback: (repos: Repo[]) => void) {
+        this.getReposPostedByUser(userName, postedRepos =>
+        {
+            this.getAllIssuesPostedByUser(userName, postedRepos.map(r => r.permlink), postedIssues => {
+               console.log("Fetching repositories of ", userName);
                this.http.get<Repo[]>(this.baseUrl + 'api/Github/GetRepos')
                .subscribe(
                    result =>
@@ -53,25 +101,6 @@ export class IssuesService {
                  });
         });
     }
-
-     public fetchAllPostedIssues(callback: (issuePosts: Post[]) => void)
-     {
-        const query = {
-            tag: 'gitsteem',
-            limit: 1,
-            start_author: 'gitsteem',
-            start_permlink: 'participants',
-            };
-
-         console.log("Fetching all posted issues...");
-
-         this.dSteemClient.database.getDiscussions('blog', query).then(
-             result => {
-                 var participants = JSON.parse(result[0].body);
-
-
-             });
-     }
 
     private getReposPostedByUser(userName: string ,callback: (postedRepos: Post[]) => void){
         const query = {
@@ -121,7 +150,7 @@ export class IssuesService {
          });
      }
 
-    private getAllIssuesPostedByUserRecursive(counter: number, userName: string, postedRepoPermalinks: string[], allIssues: Array<IssuePost>, finalCallback: () => void) {
+    private getAllIssuesPostedByUserRecursive(counter: number, userName: string, postedRepoPermalinks: string[], allIssues: Array<Post>, finalCallback: () => void) {
         this.getIssuesPostedByUser(
             userName,
             postedRepoPermalinks[counter],

@@ -20,7 +20,7 @@
 <ul *ngIf="!loading" class="list-group my-4">
   <li class="list-group-item" *ngFor="let issue of issues">
       <div>
-          Repo '{{issue.repoName}}': {{issue.title}}
+          Repo '{{issue.repo.name}}': {{issue.title}}
           <div *ngIf="!issue.repo.repoPost">
               Repository not posted!
           </div>

@@ -60,7 +60,7 @@ export class IssuesComponent implements OnInit {
     public async postIssue(issue: Issue) {
         console.log("Publishing issue to steem : ", issue);
         this.loading = true;
-        var title = '[Steemconnect test] repo=' + issue.repoName + ' issue='+ issue.id;
+        var title = '[Steemconnect test] repo=' + issue.repo.name + ' issue='+ issue.id;
         var message = issue.title + ' more details, rendered html body etc';
         var permlink = this.commentPermlink('issue-'+issue.id);
         console.log("Permlink: ", permlink);
@@ -79,7 +79,7 @@ export class IssuesComponent implements OnInit {
             ['comment',
                 {
                     parent_author: this.user,
-                    parent_permlink: 'gitsteemrepo-' + issue.repoId,
+                    parent_permlink: 'gitsteemrepo-' + issue.repo.id,
                     author: this.user,
                     permlink: permlink,
                     title: title,
