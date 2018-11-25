@@ -1,4 +1,4 @@
-interface IssuePost {
+interface Post {
     title: string;
     author: string;
     permlink: string;
