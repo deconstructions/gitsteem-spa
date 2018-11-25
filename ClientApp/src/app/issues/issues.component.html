@@ -7,11 +7,11 @@
 <ul *ngIf="!loading" class="list-group my-4">
   <li class="list-group-item" *ngFor="let repo of repos">
       {{repo.name}}
-    <div *ngIf="repo.isPosted">
+    <div *ngIf="repo.repoPost">
       Already posted!
     </div>
     <span class="input-group-btn">
-      <button *ngIf="!repo.isPosted" class="btn btn-primary" (click)="postRepo(repo)" type="submit">Submit</button>
+      <button *ngIf="!repo.repoPost" class="btn btn-primary" (click)="postRepo(repo)" type="submit">Submit</button>
     </span>
   </li>
 </ul>
@@ -20,18 +20,18 @@
 <ul *ngIf="!loading" class="list-group my-4">
   <li class="list-group-item" *ngFor="let issue of issues">
       <div>
-          @{{issue.repoName}}: {{issue.title}}
-          <div *ngIf="!issue.isRepoPosted">
+          Repo '{{issue.repoName}}': {{issue.title}}
+          <div *ngIf="!issue.repo.repoPost">
               Repository not posted!
           </div>
-          <div *ngIf="issue.isPosted">
+          <div *ngIf="issue.issuePost">
               Already posted!
           </div>
           <div *ngIf="issue.state == 'closed' ">
               Issue is closed.
           </div>
           <span class="input-group-btn">
-              <button *ngIf="issue.isRepoPosted &&  issue.state != 'closed' && !issue.isPosted" class="btn btn-primary" (click)="postIssue(issue)" type="submit">Submit</button>
+              <button *ngIf="issue.repo.repoPost &&  issue.state != 'closed' && !issue.issuePost" class="btn btn-primary" (click)="postIssue(issue)" type="submit">Submit</button>
           </span>
       </div>
   </li>

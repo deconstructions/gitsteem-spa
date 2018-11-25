@@ -1,9 +1,7 @@
 interface Issue {
     id: number;
     title: string;
-    repoName: string;
-    repoId: number;
+    repo: Repo;
     state: string;
-    isRepoPosted: boolean;
-    isPosted: boolean;
+    issuePost: Post;
 }

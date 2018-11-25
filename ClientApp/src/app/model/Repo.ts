@@ -1,6 +1,6 @@
 interface Repo {
     name: string;
     id: number;
-    isPosted: boolean;
+    repoPost: Post;
     issues: Issue[];
 }

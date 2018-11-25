@@ -1,1 +1,14 @@
 <h3>Explore all issues</h3>
+
+<button class="ml-2 btn btn-secondary" type="submit" (click)="loadIssuePosts()">
+    Load
+</button>
+
+<ul *ngIf="!loading" class="list-group my-4">
+    <li class="list-group-item" *ngFor="let issuePost of issuePosts">
+        {{issuePost.repoName}}: {{issuePost.title}}
+        <button class="ml-2 btn btn-secondary btn-sm" type="submit" (click)="vote(issuePost.author, issuePost.permlink, 973)">
+            <i class="icon iconfont icon-praise"></i> {{issuePost.votes}}
+        </button>
+    </li>
+</ul>

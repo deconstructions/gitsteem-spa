@@ -25,105 +25,25 @@ export class IssuesService {
         this.baseUrl = baseUrl;
     }
 
-    getPostedRepos(callback: (postedRepoPermalinks: string[]) => void){
-        const query = {
-            tag: localStorage.getItem('currentUser'),
-            limit: 100
-        };
-
-        console.log('Searching for posted repositories...');
-
-        this.dSteemClient.database
-            .getDiscussions('blog', query)
-            .then(result =>{
-                var filteredResults = result.map(d => d.permlink).filter(s => s.includes('gitsteemrepo-'));
-
-                for (let repo of filteredResults)
-                 {
-                     console.log("Repo ",repo," has already been posted.");
-                 }
-
-                callback(filteredResults);
-
-                })
-            .catch(err => {
-                console.log(err);
-                alert(`Error:${err}, try again`);
-                });
-    }
-
-     getAllPostedIssues(postedRepoPermalinks: string[],callback: (postedIssuePermalinks: string[]) => void){
-
-        console.log('Searching for all posted issues...');
-         var allIssues = new Array<string>();
-
-         this.getAllPostedIssuesRecursive(0, postedRepoPermalinks, allIssues, () =>
-         {
-             callback(allIssues);
-         });
-     }
-
-    getAllPostedIssuesRecursive(counter: number, postedRepoPermalinks: string[], allIssues: Array<string>, finalCallback: () => void) {
-        this.getPostedIssues(
-             postedRepoPermalinks[counter],
-             (issuesForRepo) =>
-             {
-                 for (let issue of issuesForRepo)
-                 {
-                     console.log("Issue ", issue, " has already been posted in repo ", postedRepoPermalinks[counter]);
-                     allIssues.push(issue);
-                 }
-
-                 if (counter == postedRepoPermalinks.length - 1){
-                     finalCallback();
-                 }
-                 else {
-                     this.getAllPostedIssuesRecursive(counter + 1, postedRepoPermalinks, allIssues, finalCallback);
-                 }
-             });
-    }
-
-    getPostedIssues(postedRepoPermalink: string,callback: (postedIssueIds: string[]) => void){
-
-        let author = localStorage.getItem('currentUser');
-
-        let parentPermlink = postedRepoPermalink;
-
-         console.log("Searching for posted issues for repo ", parentPermlink, " from author", author," ...");
-
-        this.dSteemClient.database.call(
-            'get_content_replies', 
-            [author, parentPermlink])
-            .then(result =>{
-
-                var filteredResults = result.map(d => d.permlink).filter(s => s.includes('issue-'));
-
-                callback(filteredResults);
-
-                })
-            .catch(err => {
-                console.log(err);
-                alert(`Error:${err}, try again`);
-                });
-    }
-
-    fetchOwnReposWithIssues(callback: (repos: Repo[]) => void)
+    public fetchOwnReposWithIssues(callback: (repos: Repo[]) => void)
     {
-        this.getPostedRepos(postedRepoPermalinks =>
+        var currentUser = localStorage.getItem('currentUser');
+
+        this.getReposPostedByUser(currentUser, postedRepos =>
         {
-            this.getAllPostedIssues(postedRepoPermalinks, postedIssuePermalinks => {
-               console.log("Fetching own repositories");
+            this.getAllIssuesPostedByUser(currentUser, postedRepos.map(r => r.permlink), postedIssues => {
+               console.log("Fetching repositories of ", currentUser);
                this.http.get<Repo[]>(this.baseUrl + 'api/Github/GetRepos')
                .subscribe(
                    result =>
                    {
                        for (let repo of result) {
-                           repo.isPosted = postedRepoPermalinks.indexOf('gitsteemrepo-'+repo.id) > -1;
+                           repo.repoPost = postedRepos.find(r => r.permlink == 'gitsteemrepo-'+repo.id);
 
                            for (let issue of repo.issues) 
                            {
-                               issue.isRepoPosted = repo.isPosted;
-                               issue.isPosted = postedIssuePermalinks.indexOf('issue-'+ issue.id) >  -1;
+                               issue.repo = repo;
+                               issue.issuePost = postedIssues.find(i => i.permlink == 'issue-'+ issue.id);
                            }
                        }
 
@@ -132,5 +52,132 @@ export class IssuesService {
                    error => console.error(error));
                  });
         });
+    }
+
+     public fetchAllPostedIssues(callback: (issuePosts: Post[]) => void)
+     {
+        const query = {
+            tag: 'gitsteem',
+            limit: 1,
+            start_author: 'gitsteem',
+            start_permlink: 'participants',
+            };
+
+         console.log("Fetching all posted issues...");
+
+         this.dSteemClient.database.getDiscussions('blog', query).then(
+             result => {
+                 var participants = JSON.parse(result[0].body);
+
+
+             });
+     }
+
+    private getReposPostedByUser(userName: string ,callback: (postedRepos: Post[]) => void){
+        const query = {
+            tag: userName,
+            limit: 100
+        };
+
+        console.log('Searching for posted repositories...');
+
+        this.dSteemClient.database
+            .getDiscussions('blog', query)
+            .then(result =>{
+                var filteredResults = result.filter(s => s.permlink.includes('gitsteemrepo-'));
+
+                for (let repo of filteredResults)
+                 {
+                     console.log("Repo ",repo.title," has already been posted.");
+                 }
+
+                 var mappedResults = filteredResults.map(r => {
+                    var repoPost : Post = {
+                        title: r.title,
+                        author: userName,
+                        permlink: r.permlink,
+                        votes: r.net_votes};
+
+                     return repoPost;
+                 });
+
+                callback(mappedResults);
+
+                })
+            .catch(err => {
+                console.log(err);
+                alert(`Error:${err}, try again`);
+                });
+    }
+
+     private getAllIssuesPostedByUser(userName: string, postedRepoPermalinks: string[],callback: (postedIssues: Post[]) => void){
+
+        console.log('Searching for all posted issues...');
+         var allIssues = new Array<Post>();
+
+         this.getAllIssuesPostedByUserRecursive(0, userName, postedRepoPermalinks, allIssues, () =>
+         {
+             callback(allIssues);
+         });
+     }
+
+    private getAllIssuesPostedByUserRecursive(counter: number, userName: string, postedRepoPermalinks: string[], allIssues: Array<IssuePost>, finalCallback: () => void) {
+        this.getIssuesPostedByUser(
+            userName,
+            postedRepoPermalinks[counter],
+             (issuesForRepo) =>
+             {
+                 for (let issue of issuesForRepo)
+                 {
+                     console.log("Issue ", issue.title, " has already been posted in repo ", postedRepoPermalinks[counter]);
+                     allIssues.push(issue);
+                 }
+
+                 if (counter == postedRepoPermalinks.length - 1){
+                     finalCallback();
+                 }
+                 else {
+                     this.getAllIssuesPostedByUserRecursive(
+                         counter + 1,
+                         userName,
+                         postedRepoPermalinks,
+                         allIssues,
+                         finalCallback);
+                 }
+             });
+    }
+
+    private getIssuesPostedByUser(userName: string, postedRepoPermalink: string, callback: (postedIssues: Post[]) => void){
+
+        let parentPermlink = postedRepoPermalink;
+
+         console.log("Searching for posted issues for repo ", parentPermlink, " from author", userName," ...");
+
+        this.dSteemClient.database.call(
+            'get_content_replies', 
+            [userName, parentPermlink])
+            .then(result =>{
+
+                var filteredResults = result.filter(s => s.permlink.includes('issue-'));
+
+                console.log("Results: ", filteredResults);
+
+                var mappedResults = filteredResults.map(r => {
+                    var issue : Post = {
+                        title: r.title,
+                        author: userName,
+                        permlink: r.permlink,
+                        votes: r.net_votes}
+
+                    return issue;
+                });
+
+                callback(mappedResults);
+
+                })
+            .catch(err => {
+                console.log(err);
+                alert(`Error:${err}, try again`);
+                });
     }
 }

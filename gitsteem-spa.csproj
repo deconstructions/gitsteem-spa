@@ -28,8 +28,7 @@
     <None Remove="ClientApp\src\app\explore\issues.component.html" />
     <None Remove="ClientApp\src\app\explore\issues.component.html" />
     <None Remove="ClientApp\src\app\explore\issues.component.html" />
-    <None Remove="ClientApp\src\app\explore\explore.component.html" />
-    <None Remove="ClientApp\src\app\explore\explore.component.html" />
+    <None Remove="ClientApp\src\app\explore\home.component.html" />
   </ItemGroup>
 
   <ItemGroup>
