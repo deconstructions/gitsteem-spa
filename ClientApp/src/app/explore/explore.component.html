@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="https://at.alicdn.com/t/font_ykgtxz90gjve7b9.css">
 <h3>Explore all issues</h3>
 
 <button class="ml-2 btn btn-secondary" type="submit" (click)="loadIssues()">
@@ -8,7 +9,7 @@
     <li  class="list-group-item" *ngFor="let issue of issues">
         {{issue.repo.name}}: {{issue.title}}
 
-      <button class="ml-2 btn btn-secondary btn-sm" type="submit" (click)="vote(issue.issuePost.author, issue.issuePost.permlink, 973)">
+      <button *ngIf="!issue.issuePost.isPaidOut" class="ml-2 btn btn-secondary btn-sm" type="submit" (click)="vote(issue.issuePost.author, issue.issuePost.permlink, 1000)">
           <i class="icon iconfont icon-praise"></i> {{issue.issuePost.votes}}
       </button>
     </li>

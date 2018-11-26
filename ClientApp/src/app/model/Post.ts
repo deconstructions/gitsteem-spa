@@ -3,4 +3,5 @@ interface Post {
     author: string;
     permlink: string;
     votes: number;
+    isPaidOut: boolean;
 }
